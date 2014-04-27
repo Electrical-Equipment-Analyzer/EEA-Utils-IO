@@ -36,4 +36,14 @@ public class VoltageInputStream extends FilterInputStream {
         return ((DataInputStream) in).readDouble();
     }
 
+    @Override
+    public int available() throws IOException {
+        return super.available() / 8;
+    }
+
+    @Override
+    public long skip(long n) throws IOException {
+        return super.skip(n * 8);
+    }
+
 }
