@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Leo
+ * Copyright (C) 2014, St. John's University and/or its affiliates. All rights reserved.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -23,8 +23,10 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
+ * This class is an Utility to get data from IEPE device.
  *
  * @author Leo
+ * @since 1.0
  */
 public class IEPEInput extends Thread {
 
@@ -33,21 +35,48 @@ public class IEPEInput extends Thread {
     private int length = 128;
     private int channel[];
 
+    /**
+     * Creates a IEPE Utility where the IEPE device and the port number
+     * are specified value.
+     *
+     * @param device The IEPE device
+     * @param channel read channels number
+     * @param length samples per channel in once read.
+     */
     public IEPEInput(IEPEDevice device, int[] channel, int length) {
         this.device = device;
         this.length = length;
         this.channel = channel;
     }
 
+    /**
+     * Creates a IEPE Utility where the IEPE device and the port number
+     * are specified value.
+     *
+     * @param device The IEPE device
+     * @param channel read channels number
+     */
     public IEPEInput(IEPEDevice device, int[] channel) {
         this.device = device;
         this.channel = channel;
     }
 
+    /**
+     * Gets the InputStream.
+     *
+     * @param channel the channel number
+     * @return the InputStream of channel.
+     */
     public IEPEInputStream getIepeStreams(int channel) {
         return iepeStreams[channel];
     }
 
+    /**
+     * Start the Utility to acquire data.
+     * 
+     * @throws IEPEException if an IEPE error occurs
+     * @throws IOException if an I/O error occurs
+     */
     public void startIEPE() throws IEPEException, IOException {
         device.openDevice();
         device.configure();
@@ -59,12 +88,21 @@ public class IEPEInput extends Thread {
         super.start();
     }
 
+    /**
+     * Stop the Utility to acquire data.
+     * 
+     * @throws IEPEException if an IEPE error occurs
+     */
     public void stopIEPE() throws IEPEException {
         super.stop();
         device.stop();
         device.closeDevice();
     }
 
+    /**
+     * The Utility thread.
+     * 
+     */
     @Override
     public void run() {
         try {
