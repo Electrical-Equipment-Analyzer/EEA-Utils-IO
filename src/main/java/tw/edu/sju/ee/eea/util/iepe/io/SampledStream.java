@@ -15,41 +15,41 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package tw.edu.sju.ee.eea.util.iepe;
+package tw.edu.sju.ee.eea.util.iepe.io;
 
-import java.io.DataOutputStream;
+import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.PipedInputStream;
-import java.io.PipedOutputStream;
 
 /**
  *
  * @author Leo
  */
-public class IEPEInputStream extends InputStream {
+public class SampledStream extends FilterInputStream {
 
-    private DataOutputStream dataOut;
-    private PipedInputStream pipe = new PipedInputStream(1024000);
+    private int sample;
+    private boolean plus_minus;
 
-    public IEPEInputStream() throws IOException {
-        PipedOutputStream pipedOutputStream = new PipedOutputStream(pipe);
-        dataOut = new DataOutputStream(pipedOutputStream);
+    public SampledStream(IepeInputStream voltage, int sample) {
+        super(voltage);
+        this.sample = sample;
     }
 
-    void write(double[] data) throws IOException {
-        for (double d : data) {
-            dataOut.writeDouble(d);
+    public double readSampled() throws IOException {
+        while (super.available() < sample) {
+            Thread.yield();
         }
+        double tmp = 0;
+        if (plus_minus = !plus_minus) {
+            for (int i = 0; i < sample; i++) {
+                tmp = Math.max(tmp, ((IepeInputStream) in).readValue());
+            }
+        } else {
+            for (int i = 0; i < sample; i++) {
+                tmp = Math.min(tmp, ((IepeInputStream) in).readValue());
+            }
+        }
+        return tmp;
     }
 
-    @Override
-    public int available() throws IOException {
-        return pipe.available();
-    }
-
-    @Override
-    public int read() throws IOException {
-        return pipe.read();
-    }
 }

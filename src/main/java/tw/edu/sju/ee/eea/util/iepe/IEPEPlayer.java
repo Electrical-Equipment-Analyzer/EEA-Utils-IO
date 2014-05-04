@@ -17,6 +17,8 @@
  */
 package tw.edu.sju.ee.eea.util.iepe;
 
+import tw.edu.sju.ee.eea.util.iepe.io.IepeInputStream;
+import tw.edu.sju.ee.eea.util.iepe.io.QuantizationStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PipedInputStream;
@@ -91,7 +93,7 @@ public class IEPEPlayer extends Thread {
 
     @Override
     public void run() {
-        QuantizationStream qs = new QuantizationStream(new VoltageInputStream(pipeIn), 16);
+        QuantizationStream qs = new QuantizationStream(new IepeInputStream(pipeIn), 16);
         while (true) {
             try {
                 byte[] buffer = qs.readQuantization();

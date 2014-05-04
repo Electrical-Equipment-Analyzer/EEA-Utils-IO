@@ -17,10 +17,14 @@
  */
 package tw.edu.sju.ee.eea.util.iepe;
 
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InterruptedIOException;
+import java.io.PipedInputStream;
+import java.io.PipedOutputStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import tw.edu.sju.ee.eea.util.iepe.io.IepeInputStream;
 
 /**
  * This class is an Utility to get data from IEPE device.
@@ -31,7 +35,7 @@ import java.util.logging.Logger;
 public class IEPEInput extends Thread {
 
     private IEPEDevice device;
-    private IEPEInputStream[] iepeStreams;
+    private IepeStream[] iepeStreams;
     private int length = 128;
     private int channel[];
 
@@ -67,8 +71,8 @@ public class IEPEInput extends Thread {
      * @param channel the channel number
      * @return the InputStream of channel.
      */
-    public IEPEInputStream getIepeStreams(int channel) {
-        return iepeStreams[channel];
+    public IepeInputStream getIepeStreams(int channel) {
+        return iepeStreams[channel].iepe;
     }
 
     /**
@@ -81,9 +85,9 @@ public class IEPEInput extends Thread {
         device.openDevice();
         device.configure();
         device.start();
-        iepeStreams = new IEPEInputStream[this.channel.length];
+        iepeStreams = new IepeStream[this.channel.length];
         for (int i = 0; i < this.channel.length; i++) {
-            iepeStreams[i] = new IEPEInputStream();
+            iepeStreams[i] = new IepeStream();
         }
         super.start();
     }
@@ -119,6 +123,25 @@ public class IEPEInput extends Thread {
         } catch (IOException ex) {
             Logger.getLogger(IEPEInput.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+
+    private class IepeStream {
+
+        private DataOutputStream pipe;
+        private IepeInputStream iepe;
+
+        public IepeStream() throws IOException {
+            PipedInputStream in = new PipedInputStream(1024000);
+            iepe = new IepeInputStream(in);
+            pipe = new DataOutputStream(new PipedOutputStream(in));
+        }
+
+        void write(double[] data) throws IOException {
+            for (double d : data) {
+                pipe.writeDouble(d);
+            }
+        }
+
     }
 
 }

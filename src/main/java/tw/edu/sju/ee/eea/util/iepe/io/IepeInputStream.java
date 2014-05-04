@@ -15,7 +15,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package tw.edu.sju.ee.eea.util.iepe;
+package tw.edu.sju.ee.eea.util.iepe.io;
 
 import java.io.DataInputStream;
 import java.io.FilterInputStream;
@@ -26,13 +26,13 @@ import java.io.InputStream;
  *
  * @author Leo
  */
-public class VoltageInputStream extends FilterInputStream {
+public class IepeInputStream extends FilterInputStream {
 
-    public VoltageInputStream(InputStream in) {
+    public IepeInputStream(InputStream in) {
         super(new DataInputStream(in));
     }
 
-    public double readVoltage() throws IOException {
+    public double readValue() throws IOException {
         return ((DataInputStream) in).readDouble();
     }
 
