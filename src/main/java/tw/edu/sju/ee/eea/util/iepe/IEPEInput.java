@@ -36,8 +36,8 @@ public class IEPEInput extends Thread {
     private int channel[];
 
     /**
-     * Creates a IEPE Utility where the IEPE device and the port number
-     * are specified value.
+     * Creates a IEPE Utility where the IEPE device and the port number are
+     * specified value.
      *
      * @param device The IEPE device
      * @param channel read channels number
@@ -50,8 +50,8 @@ public class IEPEInput extends Thread {
     }
 
     /**
-     * Creates a IEPE Utility where the IEPE device and the port number
-     * are specified value.
+     * Creates a IEPE Utility where the IEPE device and the port number are
+     * specified value.
      *
      * @param device The IEPE device
      * @param channel read channels number
@@ -73,7 +73,7 @@ public class IEPEInput extends Thread {
 
     /**
      * Start the Utility to acquire data.
-     * 
+     *
      * @throws IEPEException if an IEPE error occurs
      * @throws IOException if an I/O error occurs
      */
@@ -90,7 +90,7 @@ public class IEPEInput extends Thread {
 
     /**
      * Stop the Utility to acquire data.
-     * 
+     *
      * @throws IEPEException if an IEPE error occurs
      */
     public void stopIEPE() throws IEPEException {
@@ -101,7 +101,7 @@ public class IEPEInput extends Thread {
 
     /**
      * The Utility thread.
-     * 
+     *
      */
     @Override
     public void run() {

@@ -18,8 +18,8 @@
 package tw.edu.sju.ee.eea.util.iepe;
 
 /**
- * A {@code IEPEDevice} is a IEPE sensor input device.
- * This is the basic mathod to control device.
+ * A {@code IEPEDevice} is a IEPE sensor input device. This is the basic mathod
+ * to control device.
  *
  * @author Leo
  * @see IEPEInput
@@ -28,18 +28,16 @@ package tw.edu.sju.ee.eea.util.iepe;
 public interface IEPEDevice {
 
     /**
-     * Open this device to connected.
-     * If the device is already opened then invoking this
-     * method has no effect.
+     * Open this device to connected. If the device is already opened then
+     * invoking this method has no effect.
      *
      * @throws IEPEException if an error occurs
      */
     public void openDevice() throws IEPEException;
 
     /**
-     * Close this device to releases resources associated with it.
-     * If the device is already opened then invoking this
-     * method has no effect.
+     * Close this device to releases resources associated with it. If the device
+     * is already opened then invoking this method has no effect.
      *
      * @throws IEPEException if an error occurs
      */
@@ -71,14 +69,14 @@ public interface IEPEDevice {
 
     /**
      * Start the device to acquire data.
-     * 
+     *
      * @throws IEPEException if an error occurs
      */
     public void start() throws IEPEException;
 
     /**
      * Stop the device to acquire data.
-     * 
+     *
      * @throws IEPEException if an error occurs
      */
     public void stop() throws IEPEException;

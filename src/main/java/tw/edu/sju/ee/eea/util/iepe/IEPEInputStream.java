@@ -44,6 +44,11 @@ public class IEPEInputStream extends InputStream {
     }
 
     @Override
+    public int available() throws IOException {
+        return pipe.available();
+    }
+
+    @Override
     public int read() throws IOException {
         return pipe.read();
     }
