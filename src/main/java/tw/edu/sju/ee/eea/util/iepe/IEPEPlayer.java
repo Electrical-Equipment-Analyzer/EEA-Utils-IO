@@ -34,7 +34,7 @@ import javax.sound.sampled.SourceDataLine;
  *
  * @author Leo
  */
-public class IEPEPlayer extends Thread {
+public class IEPEPlayer implements Runnable {
 
     private SourceDataLine audioOut = null;
     private PipedInputStream pipeIn;
@@ -77,30 +77,22 @@ public class IEPEPlayer extends Thread {
         }
     }
 
-    public void startPlay() {
-        super.start();
-        audioOut.start();
-    }
-
-    public void stopPlay() {
-        super.stop();
-        audioOut.stop();
-    }
-
     public OutputStream getOutputStream() {
         return pipeOut;
     }
 
     @Override
     public void run() {
+        audioOut.start();
         QuantizationStream qs = new QuantizationStream(new IepeInputStream(pipeIn), 16);
-        while (true) {
+        while (!Thread.interrupted()) {
             try {
                 byte[] buffer = qs.readQuantization();
                 audioOut.write(buffer, 0, buffer.length);
             } catch (IOException ex) {
             }
         }
+        audioOut.stop();
     }
 
 }
