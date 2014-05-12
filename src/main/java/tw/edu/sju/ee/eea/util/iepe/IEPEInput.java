@@ -65,26 +65,40 @@ public class IEPEInput implements Runnable {
         this(device, channel, 128);
     }
 
-    public void addStream(int channel, IepeStream stream) {
+    public Stream addStream(int channel, IepeStream stream) {
         if (channel > this.stream.length) {
             System.out.println("OutOfLength");
-            return;
+            return null;
         }
         if (this.stream[channel] == null) {
             this.stream[channel] = new ArrayList<Stream>();
         }
         this.stream[channel].add(stream);
+        return stream;
     }
 
-    public void addStream(int channel, OutputStream stream) {
+    public Stream addStream(int channel, OutputStream stream) {
+        if (channel > this.stream.length) {
+            System.out.println("OutOfLength");
+            return null;
+        }
+        if (this.stream[channel] == null) {
+            this.stream[channel] = new ArrayList<Stream>();
+        }
+        Stream s = new IepeOutputStream(stream);
+        this.stream[channel].add(s);
+        return s;
+    }
+
+    public void removeStream(int channel, Stream stream) {
         if (channel > this.stream.length) {
             System.out.println("OutOfLength");
             return;
         }
         if (this.stream[channel] == null) {
-            this.stream[channel] = new ArrayList<Stream>();
+            return;
         }
-        this.stream[channel].add(new IepeOutputStream(stream));
+        this.stream[channel].remove(stream);
     }
 
     /**
@@ -128,7 +142,7 @@ public class IEPEInput implements Runnable {
         }
     }
 
-    private interface Stream {
+    public interface Stream {
 
         void write(double[] data) throws IOException;
     }

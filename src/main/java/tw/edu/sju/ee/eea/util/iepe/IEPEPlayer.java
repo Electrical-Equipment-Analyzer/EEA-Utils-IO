@@ -85,14 +85,16 @@ public class IEPEPlayer implements Runnable {
     public void run() {
         audioOut.start();
         QuantizationStream qs = new QuantizationStream(new IepeInputStream(pipeIn), 16);
-        while (!Thread.interrupted()) {
-            try {
+        try {
+            while (!Thread.interrupted()) {
                 byte[] buffer = qs.readQuantization();
                 audioOut.write(buffer, 0, buffer.length);
-            } catch (IOException ex) {
             }
+        } catch (IOException ex) {
         }
         audioOut.stop();
+        pipeOut = null;
+        pipeIn = null;
     }
 
 }
