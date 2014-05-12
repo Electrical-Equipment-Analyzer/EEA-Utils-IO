@@ -18,7 +18,6 @@
 package tw.edu.sju.ee.eea.util.iepe.io;
 
 import java.io.DataInputStream;
-import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -26,14 +25,14 @@ import java.io.InputStream;
  *
  * @author Leo
  */
-public class IepeInputStream extends FilterInputStream {
+public class IepeInputStream extends DataInputStream {
 
     public IepeInputStream(InputStream in) {
-        super(new DataInputStream(in));
+        super(in);
     }
 
     public double readValue() throws IOException {
-        return ((DataInputStream) in).readDouble();
+        return super.readDouble();
     }
 
     @Override

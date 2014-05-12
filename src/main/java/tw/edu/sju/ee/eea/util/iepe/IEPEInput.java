@@ -17,12 +17,8 @@
  */
 package tw.edu.sju.ee.eea.util.iepe;
 
-import java.io.DataInputStream;
 import java.io.DataOutputStream;
-import java.io.FilterInputStream;
-import java.io.FilterOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InterruptedIOException;
 import java.io.OutputStream;
 import java.io.PipedInputStream;
@@ -38,13 +34,11 @@ import tw.edu.sju.ee.eea.util.iepe.io.IepeInputStream;
  * @author Leo
  * @since 1.0
  */
-public class IEPEInput extends Thread {
+public class IEPEInput implements Runnable {
 
     private IEPEDevice device;
-//    private IepeStream[] iepeStreams;
     private int length;
-//    private int channel[];
-    private ArrayList<IepeStream>[] stream;
+    private ArrayList<Stream>[] stream;
 
     /**
      * Creates a IEPE Utility where the IEPE device and the port number are
@@ -58,7 +52,6 @@ public class IEPEInput extends Thread {
         this.device = device;
         this.length = length;
         stream = new ArrayList[8];
-//        this.channel = channel;
     }
 
     /**
@@ -78,31 +71,22 @@ public class IEPEInput extends Thread {
             return;
         }
         if (this.stream[channel] == null) {
-            this.stream[channel] = new ArrayList<IepeStream>();
+            this.stream[channel] = new ArrayList<Stream>();
         }
         this.stream[channel].add(stream);
     }
 
-//    public IepeInputStream getIepeStreams(int channel) {
-//        return iepeStreams[channel].iepe;
-//    }
-//
-//    /**
-//     * Start the Utility to acquire data.
-//     *
-//     * @throws IEPEException if an IEPE error occurs
-//     * @throws IOException if an I/O error occurs
-//     */
-//    public void startIEPE() throws IEPEException, IOException {
-//        device.openDevice();
-//        device.configure();
-//        device.start();
-//        iepeStreams = new IepeStream[this.channel.length];
-//        for (int i = 0; i < this.channel.length; i++) {
-//            iepeStreams[i] = new IepeStream();
-//        }
-//        super.start();
-//    }
+    public void addStream(int channel, OutputStream stream) {
+        if (channel > this.stream.length) {
+            System.out.println("OutOfLength");
+            return;
+        }
+        if (this.stream[channel] == null) {
+            this.stream[channel] = new ArrayList<Stream>();
+        }
+        this.stream[channel].add(new IepeOutputStream(stream));
+    }
+
     /**
      * The Utility thread.
      *
@@ -144,21 +128,39 @@ public class IEPEInput extends Thread {
         }
     }
 
-    private class IepeStream extends IepeInputStream {
+    private interface Stream {
+
+        void write(double[] data) throws IOException;
+    }
+
+    public static class IepeStream extends IepeInputStream implements Stream {
 
         private DataOutputStream pipe;
 
         public IepeStream() throws IOException {
             super(new PipedInputStream(1024000));
-            pipe = new DataOutputStream(new PipedOutputStream((PipedInputStream) this.in));
+            pipe = new DataOutputStream(new PipedOutputStream((PipedInputStream) super.in));
         }
 
-        private void write(double[] data) throws IOException {
+        public void write(double[] data) throws IOException {
             for (double d : data) {
                 pipe.writeDouble(d);
             }
         }
 
+    }
+
+    private static class IepeOutputStream extends DataOutputStream implements Stream {
+
+        public IepeOutputStream(OutputStream out) {
+            super(out);
+        }
+
+        public void write(double[] data) throws IOException {
+            for (double d : data) {
+                writeDouble(d);
+            }
+        }
     }
 
 }
