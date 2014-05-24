@@ -17,7 +17,9 @@
  */
 package tw.edu.sju.ee.eea.util.iepe;
 
+import java.io.Closeable;
 import java.io.DataOutputStream;
+import java.io.Flushable;
 import java.io.IOException;
 import java.io.InterruptedIOException;
 import java.io.OutputStream;
@@ -65,7 +67,7 @@ public class IEPEInput implements Runnable {
         this(device, channel, 128);
     }
 
-    public Stream addStream(int channel, IepeStream stream) {
+    public Stream addStream(int channel, Stream stream) {
         if (channel > this.stream.length) {
             System.out.println("OutOfLength");
             return null;
@@ -91,6 +93,9 @@ public class IEPEInput implements Runnable {
     }
 
     public void removeStream(int channel, Stream stream) {
+        if (stream == null) {
+            return;
+        }
         if (channel > this.stream.length) {
             System.out.println("OutOfLength");
             return;
@@ -99,6 +104,12 @@ public class IEPEInput implements Runnable {
             return;
         }
         this.stream[channel].remove(stream);
+    }
+
+    public synchronized Stream replaceStream(int channel, Stream regex, Stream replacement) throws IOException {
+        removeStream(channel, regex);
+        regex.close();
+        return addStream(channel, replacement);
     }
 
     /**
@@ -115,12 +126,14 @@ public class IEPEInput implements Runnable {
                 double[][] read;
                 while (!Thread.interrupted()) {
                     read = device.read(length);
-                    for (int i = 0; i < this.stream.length; i++) {
-                        if (stream[i] == null) {
-                            continue;
-                        }
-                        for (int j = 0; j < stream[i].size(); j++) {
-                            stream[i].get(j).write(read[i]);
+                    synchronized (this) {
+                        for (int i = 0; i < this.stream.length; i++) {
+                            if (stream[i] == null) {
+                                continue;
+                            }
+                            for (int j = 0; j < stream[i].size(); j++) {
+                                stream[i].get(j).write(read[i]);
+                            }
                         }
                     }
                 }
@@ -142,7 +155,7 @@ public class IEPEInput implements Runnable {
         }
     }
 
-    public interface Stream {
+    public interface Stream extends Closeable, Flushable {
 
         void write(double[] data) throws IOException;
     }
@@ -162,9 +175,13 @@ public class IEPEInput implements Runnable {
             }
         }
 
+        public void flush() throws IOException {
+            pipe.flush();
+        }
+
     }
 
-    private static class IepeOutputStream extends DataOutputStream implements Stream {
+    public static class IepeOutputStream extends DataOutputStream implements Stream {
 
         public IepeOutputStream(OutputStream out) {
             super(out);
