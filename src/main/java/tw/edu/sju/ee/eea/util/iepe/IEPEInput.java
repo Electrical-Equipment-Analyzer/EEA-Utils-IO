@@ -106,9 +106,15 @@ public class IEPEInput implements Runnable {
         this.stream[channel].remove(stream);
     }
 
-    public synchronized Stream replaceStream(int channel, Stream regex, Stream replacement) throws IOException {
-        removeStream(channel, regex);
-        regex.close();
+    public synchronized Stream replaceStream(int channel, Stream regex, Stream replacement) {
+        if (regex != null) {
+            try {
+                regex.close();
+            } catch (IOException ex) {
+                Logger.getLogger(IEPEInput.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            removeStream(channel, regex);
+        }
         return addStream(channel, replacement);
     }
 
