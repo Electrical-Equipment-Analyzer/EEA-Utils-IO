@@ -40,12 +40,19 @@ public class IEPEPlayer implements Runnable {
     private PipedInputStream pipeIn;
     private PipedOutputStream pipeOut;
 
-    public IEPEPlayer(String filter) throws IOException {
+    public IEPEPlayer() throws IOException {
         this.pipeIn = new PipedInputStream(1024);
         this.pipeOut = new PipedOutputStream(pipeIn);
         Mixer.Info[] mixerInfos = AudioSystem.getMixerInfo();
+        boolean filter = false;
         for (Mixer.Info mixerInfo : mixerInfos) {
-            if (filter != null && !mixerInfo.getName().matches(filter)) {
+            if (!mixerInfo.getName().matches(".*HDMI.*")) {
+                continue;
+            }
+            filter = true;
+        }
+        for (Mixer.Info mixerInfo : mixerInfos) {
+            if (filter && !mixerInfo.getName().matches(".*HDMI.*")) {
                 continue;
             }
             System.out.println(mixerInfo.getName());
