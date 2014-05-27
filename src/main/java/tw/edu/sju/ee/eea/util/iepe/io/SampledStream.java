@@ -35,8 +35,13 @@ public class SampledStream extends FilterInputStream {
         this.sample = sample;
     }
 
+    @Override
+    public int available() throws IOException {
+        return super.available() / sample;
+    }
+
     public double readSampled() throws IOException {
-        while (super.available() < sample) {
+        while (available() < 1) {
             Thread.yield();
         }
         double tmp = 0;
