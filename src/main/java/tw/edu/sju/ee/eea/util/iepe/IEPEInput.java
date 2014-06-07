@@ -67,7 +67,7 @@ public class IEPEInput implements Runnable {
         this(device, channel, 128);
     }
 
-    public Stream addStream(int channel, Stream stream) {
+    public synchronized Stream addStream(int channel, Stream stream) {
         if (channel > this.stream.length) {
             System.out.println("OutOfLength");
             return null;
@@ -79,7 +79,7 @@ public class IEPEInput implements Runnable {
         return stream;
     }
 
-    public Stream addStream(int channel, OutputStream stream) {
+    public synchronized Stream addStream(int channel, OutputStream stream) {
         if (channel > this.stream.length) {
             System.out.println("OutOfLength");
             return null;
@@ -92,7 +92,7 @@ public class IEPEInput implements Runnable {
         return s;
     }
 
-    public void removeStream(int channel, Stream stream) {
+    public synchronized void removeStream(int channel, Stream stream) {
         if (stream == null) {
             return;
         }
