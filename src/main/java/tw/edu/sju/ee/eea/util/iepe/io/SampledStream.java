@@ -30,8 +30,8 @@ public class SampledStream extends FilterInputStream {
     private int sample;
     private boolean plus_minus;
 
-    public SampledStream(IepeInputStream voltage, int sample) {
-        super(voltage);
+    public SampledStream(IepeInputStream iepe, int sample) {
+        super(iepe);
         this.sample = sample;
     }
 
@@ -45,7 +45,9 @@ public class SampledStream extends FilterInputStream {
             Thread.yield();
         }
         double tmp = 0;
-        if (plus_minus = !plus_minus) {
+        if (sample == 1) {
+            tmp = ((IepeInputStream) in).readValue();
+        } else if (plus_minus = !plus_minus) {
             for (int i = 0; i < sample; i++) {
                 tmp = Math.max(tmp, ((IepeInputStream) in).readValue());
             }
