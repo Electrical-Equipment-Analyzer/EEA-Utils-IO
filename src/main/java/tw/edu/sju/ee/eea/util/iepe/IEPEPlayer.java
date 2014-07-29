@@ -40,7 +40,22 @@ public class IEPEPlayer implements Runnable {
     private PipedInputStream pipeIn;
     private PipedOutputStream pipeOut;
 
-    public IEPEPlayer() throws IOException {
+    private float sampleRate;
+    private int sampleSizeInBits;
+    private int channels;
+    private int frameSize;
+    private float frameRate;
+    
+    public IEPEPlayer(float sampleRate, int sampleSizeInBits, int channels, int frameSize, float frameRate) throws IOException {
+        this.sampleRate = sampleRate;
+        this.sampleSizeInBits = sampleSizeInBits;
+        this.channels = channels;
+        this.frameSize = frameSize;
+        this.frameRate = frameRate;
+        init();
+    }
+
+    private void init() throws IOException {
         this.pipeIn = new PipedInputStream(1024);
         this.pipeOut = new PipedOutputStream(pipeIn);
         Mixer.Info[] mixerInfos = AudioSystem.getMixerInfo();
@@ -69,7 +84,7 @@ public class IEPEPlayer implements Runnable {
             if (audioOut != null) {
                 try {
                     AudioFormat currentFormat = audioOut.getFormat();
-                    audioOut.open(new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, 16000, 16, 1, 2, 16000, currentFormat.isBigEndian()));
+                    audioOut.open(new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, sampleRate, sampleSizeInBits, channels, frameSize, frameRate, currentFormat.isBigEndian()));
 //                        audioOut.open(new AudioInputStream(qs, new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, 128000, 8, 1, 1, 128000, currentFormat.isBigEndian()), 10240000));
                     break;      //  Viable line found -- search no more!
                 } catch (LineUnavailableException lue) {
@@ -91,7 +106,7 @@ public class IEPEPlayer implements Runnable {
     @Override
     public void run() {
         audioOut.start();
-        QuantizationStream qs = new QuantizationStream(new IepeInputStream(pipeIn), 16);
+        QuantizationStream qs = new QuantizationStream(new IepeInputStream(pipeIn), sampleSizeInBits);
         try {
             while (!Thread.interrupted()) {
                 byte[] buffer = qs.readQuantization();
