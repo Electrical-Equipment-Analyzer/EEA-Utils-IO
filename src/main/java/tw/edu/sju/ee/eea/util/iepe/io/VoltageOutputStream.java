@@ -25,9 +25,9 @@ import java.io.OutputStream;
  *
  * @author 薛聿明
  */
-public class IepeOutputStream extends DataOutputStream implements VoltageOutput {
+public class VoltageOutputStream extends DataOutputStream implements VoltageOutput {
 
-    public IepeOutputStream(OutputStream out) {
+    public VoltageOutputStream(OutputStream out) {
         super(out);
     }
 

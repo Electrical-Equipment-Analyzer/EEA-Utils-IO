@@ -17,8 +17,8 @@
  */
 package tw.edu.sju.ee.eea.util.iepe;
 
-import tw.edu.sju.ee.eea.util.iepe.io.IepeInputStream;
-import tw.edu.sju.ee.eea.util.iepe.io.QuantizationStream;
+import tw.edu.sju.ee.eea.util.iepe.io.VoltageInputStream;
+import tw.edu.sju.ee.eea.util.iepe.io.QuantizationInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PipedInputStream;
@@ -106,7 +106,7 @@ public class IEPEPlayer implements Runnable {
     @Override
     public void run() {
         audioOut.start();
-        QuantizationStream qs = new QuantizationStream(new IepeInputStream(pipeIn), sampleSizeInBits);
+        QuantizationInputStream qs = new QuantizationInputStream(new VoltageInputStream(pipeIn), sampleSizeInBits);
         try {
             while (!Thread.interrupted()) {
                 byte[] buffer = qs.readQuantization();

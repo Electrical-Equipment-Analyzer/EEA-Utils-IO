@@ -17,7 +17,7 @@
  */
 package tw.edu.sju.ee.eea.util.iepe.io;
 
-import java.io.DataInputStream;
+import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -25,24 +25,38 @@ import java.io.InputStream;
  *
  * @author Leo
  */
-public class IepeInputStream extends DataInputStream {
+public class SampledInputStream extends FilterInputStream {
 
-    public IepeInputStream(InputStream in) {
-        super(in);
-    }
+    private int sample;
+    private boolean plus_minus;
 
-    public double readValue() throws IOException {
-        return super.readDouble();
+    public SampledInputStream(VoltageInputStream iepe, int sample) {
+        super(iepe);
+        this.sample = sample;
     }
 
     @Override
     public int available() throws IOException {
-        return super.available() / 8;
+        return super.available() / sample;
     }
 
-    @Override
-    public long skip(long n) throws IOException {
-        return super.skip(n * 8);
+    public double readSampled() throws IOException {
+        while (available() < 1) {
+            Thread.yield();
+        }
+        double tmp = 0;
+        if (sample == 1) {
+            tmp = ((VoltageInputStream) in).readValue();
+        } else if (plus_minus = !plus_minus) {
+            for (int i = 0; i < sample; i++) {
+                tmp = Math.max(tmp, ((VoltageInputStream) in).readValue());
+            }
+        } else {
+            for (int i = 0; i < sample; i++) {
+                tmp = Math.min(tmp, ((VoltageInputStream) in).readValue());
+            }
+        }
+        return tmp;
     }
 
 }

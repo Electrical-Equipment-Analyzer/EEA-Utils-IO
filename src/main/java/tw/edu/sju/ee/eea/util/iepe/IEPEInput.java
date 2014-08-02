@@ -28,7 +28,7 @@ import java.io.PipedOutputStream;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import tw.edu.sju.ee.eea.util.iepe.io.IepeInputStream;
+import tw.edu.sju.ee.eea.util.iepe.io.VoltageInputStream;
 
 /**
  * This class is an Utility to get data from IEPE device.
@@ -40,7 +40,7 @@ public class IEPEInput implements Runnable {
 
     private IEPEDevice device;
     private int length;
-    private ArrayList<Stream>[] stream;
+    private ArrayList<VoltageArrayOutout>[] stream;
 
     /**
      * Creates a IEPE Utility where the IEPE device and the port number are
@@ -67,32 +67,32 @@ public class IEPEInput implements Runnable {
         this(device, channel, 128);
     }
 
-    public synchronized Stream addStream(int channel, Stream stream) {
+    public synchronized VoltageArrayOutout addStream(int channel, VoltageArrayOutout stream) {
         if (channel > this.stream.length) {
             System.out.println("OutOfLength");
             return null;
         }
         if (this.stream[channel] == null) {
-            this.stream[channel] = new ArrayList<Stream>();
+            this.stream[channel] = new ArrayList<VoltageArrayOutout>();
         }
         this.stream[channel].add(stream);
         return stream;
     }
 
-    public synchronized Stream addStream(int channel, OutputStream stream) {
+    public synchronized VoltageArrayOutout addStream(int channel, OutputStream stream) {
         if (channel > this.stream.length) {
             System.out.println("OutOfLength");
             return null;
         }
         if (this.stream[channel] == null) {
-            this.stream[channel] = new ArrayList<Stream>();
+            this.stream[channel] = new ArrayList<VoltageArrayOutout>();
         }
-        Stream s = new IepeOutputStream(stream);
+        VoltageArrayOutout s = new IepeOutputStream(stream);
         this.stream[channel].add(s);
         return s;
     }
 
-    public synchronized void removeStream(int channel, Stream stream) {
+    public synchronized void removeStream(int channel, VoltageArrayOutout stream) {
         if (stream == null) {
             return;
         }
@@ -106,7 +106,7 @@ public class IEPEInput implements Runnable {
         this.stream[channel].remove(stream);
     }
 
-    public synchronized Stream replaceStream(int channel, Stream regex, Stream replacement) {
+    public synchronized VoltageArrayOutout replaceStream(int channel, VoltageArrayOutout regex, VoltageArrayOutout replacement) {
         if (regex != null) {
             try {
                 regex.close();
@@ -138,7 +138,7 @@ public class IEPEInput implements Runnable {
                                 continue;
                             }
                             for (int j = 0; j < stream[i].size(); j++) {
-                                stream[i].get(j).write(read[i]);
+                                stream[i].get(j).writeVoltageArray(read[i]);
                             }
                         }
                     }
@@ -161,21 +161,21 @@ public class IEPEInput implements Runnable {
         }
     }
 
-    public interface Stream extends Closeable, Flushable {
+    public interface VoltageArrayOutout extends Closeable, Flushable {
 
-        void write(double[] data) throws IOException;
+        public void writeVoltageArray(double[] data) throws IOException;
     }
 
-    public static class IepeStream extends IepeInputStream implements Stream {
+    public static class IepePipeStream extends VoltageInputStream implements VoltageArrayOutout {
 
         private DataOutputStream pipe;
 
-        public IepeStream() throws IOException {
+        public IepePipeStream() throws IOException {
             super(new PipedInputStream(1024000));
             pipe = new DataOutputStream(new PipedOutputStream((PipedInputStream) super.in));
         }
 
-        public void write(double[] data) throws IOException {
+        public void writeVoltageArray(double[] data) throws IOException {
             for (double d : data) {
                 pipe.writeDouble(d);
             }
@@ -187,13 +187,13 @@ public class IEPEInput implements Runnable {
 
     }
 
-    public static class IepeOutputStream extends DataOutputStream implements Stream {
+    public static class IepeOutputStream extends DataOutputStream implements VoltageArrayOutout {
 
         public IepeOutputStream(OutputStream out) {
             super(out);
         }
 
-        public void write(double[] data) throws IOException {
+        public void writeVoltageArray(double[] data) throws IOException {
             for (double d : data) {
                 writeDouble(d);
             }
