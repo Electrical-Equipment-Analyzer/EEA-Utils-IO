@@ -79,7 +79,7 @@ public class IEPEInput implements Runnable {
         return stream;
     }
 
-    public synchronized VoltageArrayOutout addStream(int channel, OutputStream stream) {
+    public synchronized VoltageArrayOutout addOutputStream(int channel, OutputStream stream) {
         if (channel > this.stream.length) {
             System.out.println("OutOfLength");
             return null;
