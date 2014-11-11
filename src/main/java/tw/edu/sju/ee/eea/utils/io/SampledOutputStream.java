@@ -15,48 +15,43 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package tw.edu.sju.ee.eea.util.iepe.io;
+package tw.edu.sju.ee.eea.utils.io;
 
-import java.io.FilterInputStream;
+import java.io.FilterOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 
 /**
  *
  * @author Leo
  */
-public class SampledInputStream extends FilterInputStream {
+public class SampledOutputStream {
 
+    private ValueOutput out;
     private int sample;
     private boolean plus_minus;
 
-    public SampledInputStream(VoltageInputStream iepe, int sample) {
-        super(iepe);
+    public SampledOutputStream(ValueOutput out, int sample) {
+//        super(iepe);
+        this.out = out;
         this.sample = sample;
     }
 
-    @Override
-    public int available() throws IOException {
-        return super.available() / sample;
-    }
+    int i = 0;
+    double tmp = 0;
 
-    public double readSampled() throws IOException {
-        while (available() < 1) {
-            Thread.yield();
-        }
-        double tmp = 0;
+    public void writeSampled(double value) throws IOException {
         if (sample == 1) {
-            tmp = ((VoltageInputStream) in).readValue();
-        } else if (plus_minus = !plus_minus) {
-            for (int i = 0; i < sample; i++) {
-                tmp = Math.max(tmp, ((VoltageInputStream) in).readValue());
-            }
-        } else {
-            for (int i = 0; i < sample; i++) {
-                tmp = Math.min(tmp, ((VoltageInputStream) in).readValue());
-            }
+            out.writeValue(value);
+            return;
         }
-        return tmp;
+        if (i++ < sample) {
+            tmp = plus_minus ? Math.max(tmp, value) : Math.min(tmp, value);
+        } else {
+            out.writeValue(tmp);
+            i = 0;
+            tmp = 0;
+            plus_minus = !plus_minus;
+        }
     }
 
 }

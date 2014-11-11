@@ -15,7 +15,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package tw.edu.sju.ee.eea.util.iepe.io;
+package tw.edu.sju.ee.eea.utils.io;
 
 import java.io.FilterInputStream;
 import java.io.IOException;
@@ -29,13 +29,13 @@ public class QuantizationInputStream extends FilterInputStream {
     private int sampleSizeInBits;
     private double rate;
 
-    public QuantizationInputStream(VoltageInputStream voltage, int sampleSizeInBits, double rate) {
+    public QuantizationInputStream(ValueInputStream voltage, int sampleSizeInBits, double rate) {
         super(voltage);
         this.sampleSizeInBits = sampleSizeInBits;
         this.rate = rate;
     }
 
-    public QuantizationInputStream(VoltageInputStream voltage, int sampleSizeInBits) {
+    public QuantizationInputStream(ValueInputStream voltage, int sampleSizeInBits) {
         this(voltage, sampleSizeInBits, 1);
     }
 
@@ -46,7 +46,7 @@ public class QuantizationInputStream extends FilterInputStream {
             max = (max << 8) | 0xFF;
         }
         max >>= 1;
-        long data = (long) (((VoltageInputStream) in).readValue() * rate * max);
+        long data = (long) (((ValueInputStream) in).readValue() * rate * max);
         for (int i = 0; i < buffer.length; i++) {
             buffer[i] = (byte) (data >> (8 * i));
         }

@@ -15,10 +15,10 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package tw.edu.sju.ee.eea.util.iepe;
+package tw.edu.sju.ee.eea.utils.io.tools;
 
-import tw.edu.sju.ee.eea.util.iepe.io.VoltageInputStream;
-import tw.edu.sju.ee.eea.util.iepe.io.QuantizationInputStream;
+import tw.edu.sju.ee.eea.utils.io.ValueInputStream;
+import tw.edu.sju.ee.eea.utils.io.QuantizationInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PipedInputStream;
@@ -106,7 +106,7 @@ public class IEPEPlayer implements Runnable {
     @Override
     public void run() {
         audioOut.start();
-        QuantizationInputStream qs = new QuantizationInputStream(new VoltageInputStream(pipeIn), sampleSizeInBits);
+        QuantizationInputStream qs = new QuantizationInputStream(new ValueInputStream(pipeIn), sampleSizeInBits);
         try {
             while (!Thread.interrupted()) {
                 byte[] buffer = qs.readQuantization();

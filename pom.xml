@@ -7,12 +7,12 @@
         <version>1.0</version>
     </parent>
 
-    <groupId>tw.edu.sju.ee.eea.util</groupId>
-    <artifactId>util-iepe</artifactId>
+    <groupId>tw.edu.sju.ee.eea.utils</groupId>
+    <artifactId>utils-io</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
-    <name>EEA Util IEPE</name>
+    <name>EEA Utils IO</name>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

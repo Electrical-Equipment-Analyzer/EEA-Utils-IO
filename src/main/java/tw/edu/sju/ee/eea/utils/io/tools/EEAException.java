@@ -15,34 +15,31 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package tw.edu.sju.ee.eea.util.iepe.io;
-
-import java.io.DataInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+package tw.edu.sju.ee.eea.utils.io.tools;
 
 /**
  *
  * @author Leo
  */
-public class VoltageInputStream extends DataInputStream {
+public class EEAException extends Exception {
 
-    public VoltageInputStream(InputStream in) {
-        super(in);
+    public EEAException() {
     }
 
-    public double readValue() throws IOException {
-        return super.readDouble();
+    public EEAException(String message) {
+        super(message);
     }
 
-    @Override
-    public int available() throws IOException {
-        return super.available() / 8;
+    public EEAException(String message, Throwable cause) {
+        super(message, cause);
     }
 
-    @Override
-    public long skip(long n) throws IOException {
-        return super.skip(n * 8);
+    public EEAException(Throwable cause) {
+        super(cause);
+    }
+
+    public EEAException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+        super(message, cause, enableSuppression, writableStackTrace);
     }
 
 }

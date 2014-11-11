@@ -15,7 +15,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package tw.edu.sju.ee.eea.util.iepe.io;
+package tw.edu.sju.ee.eea.utils.io;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -25,9 +25,9 @@ import java.io.OutputStream;
  *
  * @author 薛聿明
  */
-public class VoltageOutputStream extends DataOutputStream implements VoltageOutput {
+public class ValueOutputStream extends DataOutputStream implements ValueOutput {
 
-    public VoltageOutputStream(OutputStream out) {
+    public ValueOutputStream(OutputStream out) {
         super(out);
     }
 

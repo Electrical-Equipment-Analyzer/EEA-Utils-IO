@@ -15,7 +15,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package tw.edu.sju.ee.eea.util.iepe;
+package tw.edu.sju.ee.eea.utils.io.tools;
 
 /**
  * A {@code IEPEDevice} is a IEPE sensor input device. This is the basic mathod
@@ -25,60 +25,60 @@ package tw.edu.sju.ee.eea.util.iepe;
  * @see IEPEInput
  * @since 1.0
  */
-public interface IEPEDevice {
+public interface EEADevice {
 
     /**
      * Open this device to connected. If the device is already opened then
      * invoking this method has no effect.
      *
-     * @throws IEPEException if an error occurs
+     * @throws EEAException if an error occurs
      */
-    public void openDevice() throws IEPEException;
+    public void openDevice() throws EEAException;
 
     /**
      * Close this device to releases resources associated with it. If the device
      * is already opened then invoking this method has no effect.
      *
-     * @throws IEPEException if an error occurs
+     * @throws EEAException if an error occurs
      */
-    public void closeDevice() throws IEPEException;
+    public void closeDevice() throws EEAException;
 
     /**
      * Gets the <code>DeviceID</code>.
      *
      * @return the DeviceID.
-     * @throws IEPEException if an error occurs
+     * @throws EEAException if an error occurs
      */
-    public int getDeviceId() throws IEPEException;
+    public int getDeviceId() throws EEAException;
 
     /**
      * Configure the setting to device.
      *
-     * @throws IEPEException if an error occurs
+     * @throws EEAException if an error occurs
      */
-    public void configure() throws IEPEException;
+    public void configure() throws EEAException;
 
     /**
      * Read data from device.
      *
      * @param length the sample per channel.
      * @return Channels data.
-     * @throws IEPEException if an error occurs
+     * @throws EEAException if an error occurs
      */
-    public double[][] read(int length) throws IEPEException;
+    public double[][] read(int length) throws EEAException;
 
     /**
      * Start the device to acquire data.
      *
-     * @throws IEPEException if an error occurs
+     * @throws EEAException if an error occurs
      */
-    public void start() throws IEPEException;
+    public void start() throws EEAException;
 
     /**
      * Stop the device to acquire data.
      *
-     * @throws IEPEException if an error occurs
+     * @throws EEAException if an error occurs
      */
-    public void stop() throws IEPEException;
+    public void stop() throws EEAException;
 
 }
