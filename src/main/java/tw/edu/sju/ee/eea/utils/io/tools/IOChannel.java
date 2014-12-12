@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import tw.edu.sju.ee.eea.utils.io.ValueInputStream;
+import tw.edu.sju.ee.eea.utils.io.ValueOutput;
 import tw.edu.sju.ee.eea.utils.io.ValueOutputStream;
 
 /**
@@ -39,7 +40,7 @@ public class IOChannel extends Thread {
     private ValueOutputStream pipeIn;
     private ValueInputStream pipeOut;
 
-    private ArrayList<VoltageArrayOutout> stream = new ArrayList<VoltageArrayOutout>();
+    private ArrayList<ValueOutput> stream = new ArrayList<ValueOutput>();
 
     public IOChannel() throws IOException {
         PipedInputStream pipe = new PipedInputStream(512000);
@@ -58,19 +59,16 @@ public class IOChannel extends Thread {
     public void run() {
         while (!Thread.interrupted()) {
             try {
-                double buffer[] = new double[16];
-                while (pipeOut.available() < buffer.length) {
+                while (pipeOut.available() < 1) {
                     try {
-                        Thread.sleep(10);
+                        Thread.sleep(100);
                     } catch (InterruptedException ex) {
                         Logger.getLogger(IOChannel.class.getName()).log(Level.SEVERE, null, ex);
                     }
                 }
-                for (int i = 0; i < buffer.length; i++) {
-                    buffer[i] = pipeOut.readValue();
-                }
+                double buffer = pipeOut.readValue();
                 for (int i = 0; i < stream.size(); i++) {
-                    stream.get(i).writeVoltageArray(buffer);
+                    stream.get(i).writeValue(buffer);
                 }
             } catch (IOException ex) {
                 Logger.getLogger(IOChannel.class.getName()).log(Level.SEVERE, null, ex);
@@ -78,18 +76,12 @@ public class IOChannel extends Thread {
         }
     }
 
-    public synchronized VoltageArrayOutout addStream(VoltageArrayOutout stream) {
+    public synchronized ValueOutput addStream(ValueOutput stream) {
         this.stream.add(stream);
         return stream;
     }
-
-    public synchronized VoltageArrayOutout addOutputStream(OutputStream stream) {
-        VoltageArrayOutout s = new IepeOutputStream(stream);
-        this.stream.add(s);
-        return s;
-    }
-
-    public synchronized void removeStream(VoltageArrayOutout stream) {
+    
+    public synchronized void removeStream(ValueOutput stream) {
         if (stream == null) {
             return;
         }
@@ -99,24 +91,7 @@ public class IOChannel extends Thread {
         this.stream.remove(stream);
     }
 
-    public synchronized VoltageArrayOutout replaceStream(VoltageArrayOutout regex, VoltageArrayOutout replacement) {
-        if (regex != null) {
-            try {
-                regex.close();
-            } catch (IOException ex) {
-                Logger.getLogger(IOChannel.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            removeStream(regex);
-        }
-        return addStream(replacement);
-    }
-
-    public interface VoltageArrayOutout extends Closeable, Flushable {
-
-        public void writeVoltageArray(double[] data) throws IOException;
-    }
-
-    public static class IepePipeStream extends ValueInputStream implements VoltageArrayOutout {
+    public static class IepePipeStream extends ValueInputStream implements ValueOutput {
 
         private DataOutputStream pipe;
 
@@ -125,29 +100,10 @@ public class IOChannel extends Thread {
             pipe = new DataOutputStream(new PipedOutputStream((PipedInputStream) super.in));
         }
 
-        public void writeVoltageArray(double[] data) throws IOException {
-            for (double d : data) {
-                pipe.writeDouble(d);
-            }
+        public void writeValue(double value) throws IOException {
+                pipe.writeDouble(value);
         }
 
-        public void flush() throws IOException {
-            pipe.flush();
-        }
-
-    }
-
-    public static class IepeOutputStream extends DataOutputStream implements VoltageArrayOutout {
-
-        public IepeOutputStream(OutputStream out) {
-            super(out);
-        }
-
-        public void writeVoltageArray(double[] data) throws IOException {
-            for (double d : data) {
-                writeDouble(d);
-            }
-        }
     }
 
 }

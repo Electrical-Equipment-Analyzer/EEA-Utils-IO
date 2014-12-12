@@ -109,7 +109,7 @@ public class EEAInput implements Runnable {
             }
         }
         Logger.getLogger(EEAInput.class.getName()).log(Level.INFO,
-                "RealSamplerate = " + (count / ((Calendar.getInstance().getTimeInMillis() - time) / (1000 * length) )));
+                "RealSamplerate = " + (count / ((Calendar.getInstance().getTimeInMillis() - time) / (1000.0 * length) )));
     }
 
 }
