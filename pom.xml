@@ -25,5 +25,17 @@
             <version>3.8.1</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-math3</artifactId>
+            <version>3.2</version>
+            <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>tw.edu.sju.ee.eea.util</groupId>
+            <artifactId>util-core</artifactId>
+            <version>1.0.1-SNAPSHOT</version>
+            <type>jar</type>
+        </dependency>
     </dependencies>
 </project>
