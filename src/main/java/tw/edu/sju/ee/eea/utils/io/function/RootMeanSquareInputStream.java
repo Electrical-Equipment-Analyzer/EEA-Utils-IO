@@ -15,34 +15,39 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package tw.edu.sju.ee.eea.utils.io;
+package tw.edu.sju.ee.eea.utils.io.function;
 
-import java.io.DataInputStream;
 import java.io.IOException;
-import java.io.InputStream;
+import tw.edu.sju.ee.eea.utils.io.ValueInput;
 
 /**
  *
  * @author Leo
  */
-public class ValueInputStream extends DataInputStream implements ValueInput {
+public class RootMeanSquareInputStream implements ValueInput{
 
-    public ValueInputStream(InputStream in) {
-        super(in);
+    private ValueInput in;
+    private int length;
+
+    public RootMeanSquareInputStream(ValueInput in, int length) {
+        this.in = in;
+        this.length = length;
     }
 
     public double readValue() throws IOException {
-        return super.readDouble();
+        double xt[] = new double[length];
+        for (int i = 0; i < xt.length; i++) {
+            xt[i] = in.readValue();
+        }
+        return rms(xt);
     }
 
-    @Override
-    public int available() throws IOException {
-        return super.available() / 8;
+    public static double rms(double[] nums) {
+        double rms = 0;
+        for (int i = 0; i < nums.length; i++) {
+            rms += nums[i] * nums[i];
+        }
+        rms /= nums.length;
+        return Math.sqrt(rms);
     }
-
-    @Override
-    public long skip(long n) throws IOException {
-        return super.skip(n * 8);
-    }
-
 }

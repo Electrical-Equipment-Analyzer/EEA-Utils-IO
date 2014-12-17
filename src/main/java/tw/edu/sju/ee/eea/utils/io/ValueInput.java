@@ -17,32 +17,13 @@
  */
 package tw.edu.sju.ee.eea.utils.io;
 
-import java.io.DataInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 
 /**
  *
  * @author Leo
  */
-public class ValueInputStream extends DataInputStream implements ValueInput {
+public interface ValueInput {
 
-    public ValueInputStream(InputStream in) {
-        super(in);
-    }
-
-    public double readValue() throws IOException {
-        return super.readDouble();
-    }
-
-    @Override
-    public int available() throws IOException {
-        return super.available() / 8;
-    }
-
-    @Override
-    public long skip(long n) throws IOException {
-        return super.skip(n * 8);
-    }
-
+    public double readValue() throws IOException;
 }
