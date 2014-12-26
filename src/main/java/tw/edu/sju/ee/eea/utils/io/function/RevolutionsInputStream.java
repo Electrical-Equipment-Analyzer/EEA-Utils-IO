@@ -17,77 +17,62 @@
  */
 package tw.edu.sju.ee.eea.utils.io.function;
 
+import java.awt.Point;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
+import org.jfree.data.xy.XYDataItem;
 import tw.edu.sju.ee.eea.utils.io.ValueInput;
 
 /**
  *
  * @author Leo
  */
-public class RevolutionsInputStream extends InputStream implements ValueInput {
-
+public class RevolutionsInputStream extends InputStream implements PlotInput {
+    
     private ValueInput in;
-    private int length;
-    boolean level;
-    private int count = 0;
+    private int samplerate;
+    private double timebase;
 
-    public RevolutionsInputStream(ValueInput in, int length) {
+    private double length;
+//    private int interval;
+    
+    boolean level;
+    private int x = 0;
+    private int y;
+    
+    public RevolutionsInputStream(ValueInput in,  int samplerate, double timebase) {
         this.in = in;
+        this.samplerate = samplerate;
+        this.timebase = timebase;
+    }
+
+    public void setLength(double length) {
         this.length = length;
     }
 
-    public double readValue() throws IOException {
-        for (int i = 0; i < 100; i++) {
-
+    public void setInterval(int interval) {
+//        this.interval = interval;
+    }
+    
+    public XYDataItem readPlot() throws IOException {
+        int length = (int) (this.samplerate * this.length);
+        while (x++ < length) {
+            y++;
             double read = in.readValue();
-//            count++;
             if (!level && read > 3) {
                 level = true;
-                i += count * 100;
-                count = 0;
-                return i;
+                int re = y;
+                y = 0;
+                return new XYDataItem(x*timebase/samplerate, 60*samplerate/re);
             } else if (level && read < 3) {
                 level = false;
             }
         }
-        count++;
-        return Double.NaN;
-//        while (in.available() > 0) {
-//            double read = in.readValue();
-//            count++;
-//            if (!level && read > 3) {
-//                level = true;
-//                int tmp = count;
-//                return tmp;
-//            } else if (level && read < 3) {
-//                level = false;
-//            }
-//        }
-//
-//        return Double.NaN;
-//        double xt[] = new double[length];
-//        for (int i = 0; i < xt.length; i++) {
-//            xt[i] = in.readValue();
-//        }
-//        return trig(xt);
+        x = 0;
+        return null;
     }
-
-    private static double trig(double[] nums) {
-        double edge = 0;
-        boolean level = true;
-        for (int i = 0; i < nums.length; i++) {
-            if (!level && nums[i] > 3) {
-                edge++;
-                level = true;
-            } else if (level && nums[i] < 3) {
-                level = false;
-            }
-        }
-        return edge;
-    }
-
+    
     @Override
     public int read() throws IOException {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.

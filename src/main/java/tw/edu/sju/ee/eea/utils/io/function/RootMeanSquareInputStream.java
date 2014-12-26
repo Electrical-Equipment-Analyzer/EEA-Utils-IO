@@ -17,30 +17,51 @@
  */
 package tw.edu.sju.ee.eea.utils.io.function;
 
+import java.awt.Point;
 import java.io.IOException;
 import java.io.InputStream;
+import org.jfree.data.xy.XYDataItem;
 import tw.edu.sju.ee.eea.utils.io.ValueInput;
 
 /**
  *
  * @author Leo
  */
-public class RootMeanSquareInputStream extends InputStream implements ValueInput{
+public class RootMeanSquareInputStream extends InputStream implements PlotInput {
 
     private ValueInput in;
-    private int length;
+    private int samplerate;
+    private double timebase;
 
-    public RootMeanSquareInputStream(ValueInput in, int length) {
+    private double length;
+    private int interval;
+    private int x;
+
+    public RootMeanSquareInputStream(ValueInput in, int samplerate, double timebase) {
         this.in = in;
+        this.samplerate = samplerate;
+        this.timebase = timebase;
+    }
+
+    public void setLength(double length) {
         this.length = length;
     }
 
-    public double readValue() throws IOException {
-        double xt[] = new double[length];
-        for (int i = 0; i < xt.length; i++) {
-            xt[i] = in.readValue();
+    public void setInterval(int interval) {
+        this.interval = interval;
+    }
+
+    public XYDataItem readPlot() throws IOException {
+        int length = (int) (this.samplerate * this.length / this.interval);
+        while (x++ < length) {
+            double xt[] = new double[this.interval];
+            for (int i = 0; i < xt.length; i++) {
+                xt[i] = in.readValue();
+            }
+            return new XYDataItem(x * interval * timebase / samplerate, rms(xt));
         }
-        return rms(xt);
+        x = 0;
+        return null;
     }
 
     public static double rms(double[] nums) {
