@@ -18,6 +18,7 @@
 package tw.edu.sju.ee.eea.utils.io.function;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Arrays;
 import tw.edu.sju.ee.eea.utils.io.ValueInput;
 
@@ -25,10 +26,12 @@ import tw.edu.sju.ee.eea.utils.io.ValueInput;
  *
  * @author Leo
  */
-public class RevolutionsInputStream implements ValueInput{
+public class RevolutionsInputStream extends InputStream implements ValueInput {
 
     private ValueInput in;
     private int length;
+    boolean level;
+    private int count = 0;
 
     public RevolutionsInputStream(ValueInput in, int length) {
         this.in = in;
@@ -36,14 +39,42 @@ public class RevolutionsInputStream implements ValueInput{
     }
 
     public double readValue() throws IOException {
-        double xt[] = new double[length];
-        for (int i = 0; i < xt.length; i++) {
-            xt[i] = in.readValue();
+        for (int i = 0; i < 100; i++) {
+
+            double read = in.readValue();
+//            count++;
+            if (!level && read > 3) {
+                level = true;
+                i += count * 100;
+                count = 0;
+                return i;
+            } else if (level && read < 3) {
+                level = false;
+            }
         }
-        return trig(xt);
+        count++;
+        return Double.NaN;
+//        while (in.available() > 0) {
+//            double read = in.readValue();
+//            count++;
+//            if (!level && read > 3) {
+//                level = true;
+//                int tmp = count;
+//                return tmp;
+//            } else if (level && read < 3) {
+//                level = false;
+//            }
+//        }
+//
+//        return Double.NaN;
+//        double xt[] = new double[length];
+//        for (int i = 0; i < xt.length; i++) {
+//            xt[i] = in.readValue();
+//        }
+//        return trig(xt);
     }
 
-    public static double trig(double[] nums) {
+    private static double trig(double[] nums) {
         double edge = 0;
         boolean level = true;
         for (int i = 0; i < nums.length; i++) {
@@ -55,5 +86,10 @@ public class RevolutionsInputStream implements ValueInput{
             }
         }
         return edge;
+    }
+
+    @Override
+    public int read() throws IOException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

@@ -25,5 +25,7 @@ import java.io.IOException;
  */
 public interface ValueInput {
 
+    public int available() throws IOException;
+    
     public double readValue() throws IOException;
 }

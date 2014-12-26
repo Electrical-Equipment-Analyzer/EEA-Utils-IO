@@ -18,13 +18,14 @@
 package tw.edu.sju.ee.eea.utils.io.function;
 
 import java.io.IOException;
+import java.io.InputStream;
 import tw.edu.sju.ee.eea.utils.io.ValueInput;
 
 /**
  *
  * @author Leo
  */
-public class RootMeanSquareInputStream implements ValueInput{
+public class RootMeanSquareInputStream extends InputStream implements ValueInput{
 
     private ValueInput in;
     private int length;
@@ -49,5 +50,10 @@ public class RootMeanSquareInputStream implements ValueInput{
         }
         rms /= nums.length;
         return Math.sqrt(rms);
+    }
+
+    @Override
+    public int read() throws IOException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }
