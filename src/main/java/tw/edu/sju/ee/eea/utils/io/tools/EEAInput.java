@@ -22,6 +22,7 @@ import java.io.InterruptedIOException;
 import java.util.Calendar;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.openide.util.Exceptions;
 
 /**
  * This class is an Utility to get data from IEPE device.
@@ -46,7 +47,11 @@ public class EEAInput implements Runnable {
     public EEAInput(EEADevice device, int[] channel, int length) {
         this.device = device;
         this.length = length;
-        channels = new IOChannel[8];
+        try {
+            channels = new IOChannel[this.device.getChannelLength()];
+        } catch (EEAException ex) {
+            Logger.getLogger(EEAInput.class.getName()).log(Level.SEVERE, null, ex);
+        }
         for (int i = 0; i < channels.length; i++) {
             try {
                 channels[i] = new IOChannel();
@@ -65,6 +70,10 @@ public class EEAInput implements Runnable {
      */
     public EEAInput(EEADevice device, int[] channel) {
         this(device, channel, 16);
+    }
+
+    public IOChannel[] getIOChannel() {
+        return channels;
     }
 
     public IOChannel getIOChannel(int i) {
@@ -109,7 +118,7 @@ public class EEAInput implements Runnable {
             }
         }
         Logger.getLogger(EEAInput.class.getName()).log(Level.INFO,
-                "RealSamplerate = " + (count / ((Calendar.getInstance().getTimeInMillis() - time) / (1000.0 * length) )));
+                "RealSamplerate = " + (count / ((Calendar.getInstance().getTimeInMillis() - time) / (1000.0 * length))));
     }
 
 }

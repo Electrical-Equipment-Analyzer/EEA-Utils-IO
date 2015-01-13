@@ -52,6 +52,14 @@ public interface EEADevice {
     public int getDeviceId() throws EEAException;
 
     /**
+     * Gets the <code>ChannelLength</code>.
+     *
+     * @return the ChannelLength.
+     * @throws EEAException if an error occurs
+     */
+    public int getChannelLength() throws EEAException;
+
+    /**
      * Configure the setting to device.
      *
      * @throws EEAException if an error occurs
