@@ -34,7 +34,7 @@ public class EEAInput implements Runnable {
 
     private EEADevice device;
     private int length;
-    private IOChannel[] channels;
+    private InputChannel[] channels;
 
     /**
      * Creates a IEPE Utility where the IEPE device and the port number are
@@ -48,13 +48,13 @@ public class EEAInput implements Runnable {
         this.device = device;
         this.length = length;
         try {
-            channels = new IOChannel[this.device.getChannelLength()];
+            channels = new InputChannel[this.device.getChannelLength()];
         } catch (EEAException ex) {
             Logger.getLogger(EEAInput.class.getName()).log(Level.SEVERE, null, ex);
         }
         for (int i = 0; i < channels.length; i++) {
             try {
-                channels[i] = new IOChannel();
+                channels[i] = new InputChannel();
             } catch (IOException ex) {
                 Logger.getLogger(EEAInput.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -72,11 +72,11 @@ public class EEAInput implements Runnable {
         this(device, channel, 16);
     }
 
-    public IOChannel[] getIOChannel() {
+    public InputChannel[] getIOChannel() {
         return channels;
     }
 
-    public IOChannel getIOChannel(int i) {
+    public InputChannel getIOChannel(int i) {
         return channels[i];
     }
 

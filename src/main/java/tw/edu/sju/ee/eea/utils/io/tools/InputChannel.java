@@ -17,11 +17,7 @@
  */
 package tw.edu.sju.ee.eea.utils.io.tools;
 
-import java.io.Closeable;
-import java.io.DataOutputStream;
-import java.io.Flushable;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
 import java.util.ArrayList;
@@ -35,14 +31,14 @@ import tw.edu.sju.ee.eea.utils.io.ValueOutputStream;
  *
  * @author Leo
  */
-public class IOChannel extends Thread {
+public class InputChannel extends Thread {
 
     private ValueOutputStream pipeIn;
     private ValueInputStream pipeOut;
 
     private ArrayList<ValueOutput> stream = new ArrayList<ValueOutput>();
 
-    public IOChannel() throws IOException {
+    public InputChannel() throws IOException {
         PipedInputStream pipe = new PipedInputStream(512000);
         pipeOut = new ValueInputStream(pipe);
         pipeIn = new ValueOutputStream(new PipedOutputStream(pipe));
@@ -63,7 +59,7 @@ public class IOChannel extends Thread {
                     try {
                         Thread.sleep(100);
                     } catch (InterruptedException ex) {
-                        Logger.getLogger(IOChannel.class.getName()).log(Level.SEVERE, null, ex);
+                        Logger.getLogger(InputChannel.class.getName()).log(Level.SEVERE, null, ex);
                     }
                 }
                 double buffer = pipeOut.readValue();
@@ -71,7 +67,7 @@ public class IOChannel extends Thread {
                     stream.get(i).writeValue(buffer);
                 }
             } catch (IOException ex) {
-                Logger.getLogger(IOChannel.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(InputChannel.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
     }
@@ -80,7 +76,7 @@ public class IOChannel extends Thread {
         this.stream.add(stream);
         return stream;
     }
-    
+
     public synchronized void removeStream(ValueOutput stream) {
         if (stream == null) {
             return;
@@ -89,21 +85,6 @@ public class IOChannel extends Thread {
             return;
         }
         this.stream.remove(stream);
-    }
-
-    public static class IepePipeStream extends ValueInputStream implements ValueOutput {
-
-        private DataOutputStream pipe;
-
-        public IepePipeStream() throws IOException {
-            super(new PipedInputStream(1024000));
-            pipe = new DataOutputStream(new PipedOutputStream((PipedInputStream) super.in));
-        }
-
-        public void writeValue(double value) throws IOException {
-                pipe.writeDouble(value);
-        }
-
     }
 
 }
