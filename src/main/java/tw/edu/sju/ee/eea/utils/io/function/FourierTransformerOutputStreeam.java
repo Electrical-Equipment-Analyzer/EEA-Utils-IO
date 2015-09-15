@@ -17,7 +17,9 @@
  */
 package tw.edu.sju.ee.eea.utils.io.function;
 
+import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.Arrays;
 import org.apache.commons.math3.complex.Complex;
 import org.apache.commons.math3.transform.DftNormalization;

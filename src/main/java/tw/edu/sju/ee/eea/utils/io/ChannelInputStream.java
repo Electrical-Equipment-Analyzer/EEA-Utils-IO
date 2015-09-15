@@ -21,27 +21,62 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
+import org.openide.util.Exceptions;
 
 /**
  *
  * @author D10307009
  */
-public class ChannelInputStream  extends ValueInputStream implements ValueOutput {
+public class ChannelInputStream extends ValueInputStream implements ValueOutput {
 
-        private DataOutputStream pipe;
+    private ValueOutputStream pipe;
+    private int skip;
+    private int size;
 
-        public ChannelInputStream(int i) throws IOException {
-            super(new PipedInputStream(i));
-            pipe = new DataOutputStream(new PipedOutputStream((PipedInputStream) super.in));
-        }
+    public ChannelInputStream(int size, int skip) throws IOException {
+        super(new PipedInputStream(size * Double.BYTES));
+        this.size = size / 2;
+        pipe = new ValueOutputStream(new PipedOutputStream((PipedInputStream) super.in));
+        this.skip = skip;
+    }
 
-        public ChannelInputStream() throws IOException {
-            this(1024000);
-        }
+    public ChannelInputStream() throws IOException {
+        this(1024000, 0);
+    }
 
-        @Override
-        public void writeValue(double value) throws IOException {
+    @Override
+    public void writeValue(double value) throws IOException {
+//        System.out.println(this.available() < size);
             pipe.writeDouble(value);
+//            if (skip != 0) {
+//                skip();
+//            }
+    }
+
+//        private void skip() {
+//            try {
+//                while (this.available() > skip*2) {
+//                    this.skip(skip);
+//                }
+//            } catch (IOException ex) {
+//                Exceptions.printStackTrace(ex);
+//            }
+//        }
+
+    public void write(int b) throws IOException {
+        pipe.write(b);
+    }
+
+    public void write(byte[] b) throws IOException {
+        if (this.available() > size) {
+            System.out.println("A");
+            throw new OutOfBufferException();
         }
-    
+            System.out.println("   B");
+        pipe.write(b);
+    }
+
+    public void write(byte[] b, int off, int len) throws IOException {
+        pipe.write(b, off, len);
+    }
 }
