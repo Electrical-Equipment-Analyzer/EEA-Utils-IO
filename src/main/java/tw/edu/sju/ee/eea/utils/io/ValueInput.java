@@ -28,4 +28,6 @@ public interface ValueInput {
     public int available() throws IOException;
     
     public double readValue() throws IOException;
+    
+    public long skip(long n) throws IOException;
 }
