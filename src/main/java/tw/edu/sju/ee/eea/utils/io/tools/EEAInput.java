@@ -72,6 +72,10 @@ public class EEAInput implements Runnable {
         this(device, channel, 16);
     }
 
+    public EEAInput(EEADevice device) {
+        this(device, null, 16);
+    }
+
     public InputChannel[] getIOChannel() {
         return channels;
     }
