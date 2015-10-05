@@ -44,10 +44,32 @@ public class ChannelInputStream extends ValueInputStream implements ValueOutput 
         this(1024000, 0);
     }
 
+    boolean write;
+
     @Override
     public void writeValue(double value) throws IOException {
-//        System.out.println(this.available() < size);
+//        System.out.println(this.available());
+//        System.out.println(size);
+        if (this.available() > size) {
+//            System.out.println("full");
+            write = false;
+        } else if (this.available() < (size - 1200)) {
+//            System.out.println("unf");
+            write = true;
+        }
+        if (write) {
+//            System.out.println("wr");
             pipe.writeDouble(value);
+        }
+//        System.out.println(this.available() < size);
+//        if (value == Double.MAX_VALUE) {
+//            System.out.println("MAX");
+//            write = this.available() < size;
+//            return;
+//        }
+//        if (write) {
+//            pipe.writeDouble(value);
+//        }
 //            if (skip != 0) {
 //                skip();
 //            }
@@ -62,7 +84,6 @@ public class ChannelInputStream extends ValueInputStream implements ValueOutput 
 //                Exceptions.printStackTrace(ex);
 //            }
 //        }
-
     public void write(int b) throws IOException {
         pipe.write(b);
     }
@@ -72,7 +93,7 @@ public class ChannelInputStream extends ValueInputStream implements ValueOutput 
             System.out.println("A");
             throw new OutOfBufferException();
         }
-            System.out.println("   B");
+        System.out.println("   B");
         pipe.write(b);
     }
 

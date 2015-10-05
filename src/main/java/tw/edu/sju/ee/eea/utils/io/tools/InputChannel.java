@@ -36,14 +36,14 @@ import tw.edu.sju.ee.eea.utils.io.ValueOutputStream;
 public class InputChannel extends Thread {
 
     private ValueOutputStream pipeIn;
-    private PipedInputStream pipeOut;
+    private ValueInputStream pipeOut;
 
     private ArrayList<ValueOutput> stream = new ArrayList<ValueOutput>();
 
     public InputChannel() throws IOException {
-        pipeOut = new PipedInputStream(32 * 1024 * Double.BYTES);
-//        pipeOut = new InputStream(pipe);
-        pipeIn = new ValueOutputStream(new PipedOutputStream(pipeOut));
+        PipedInputStream pipe = new PipedInputStream(32 * 1024 * Double.BYTES);
+        pipeOut = new ValueInputStream(pipe);
+        pipeIn = new ValueOutputStream(new PipedOutputStream(pipe));
         this.start();
     }
 
@@ -54,6 +54,7 @@ public class InputChannel extends Thread {
             }
             pipeIn.writeDouble(d);
         }
+        pipeIn.writeDouble(Double.POSITIVE_INFINITY);
     }
 
     @Override
@@ -67,17 +68,16 @@ public class InputChannel extends Thread {
                         Logger.getLogger(InputChannel.class.getName()).log(Level.SEVERE, null, ex);
                     }
                 }
-//                double buffer = pipeOut.readValue();
+                double buffer = pipeOut.readValue();
 
-                byte b[] = new byte[32 * Double.BYTES];
-                pipeOut.read(b);
-
+//                byte b[] = new byte[32 * Double.BYTES];
+//                pipeOut.read(b);
                 for (int i = 0; i < stream.size(); i++) {
-//                    stream.get(i).writeValue(buffer);
-                    try {
-                        stream.get(i).write(b);
-                    } catch (OutOfBufferException ex) {
-                    }
+                    stream.get(i).writeValue(buffer);
+//                    try {
+//                        stream.get(i).write(b);
+//                    } catch (OutOfBufferException ex) {
+//                    }
                 }
             } catch (IOException ex) {
                 Logger.getLogger(InputChannel.class.getName()).log(Level.SEVERE, null, ex);
