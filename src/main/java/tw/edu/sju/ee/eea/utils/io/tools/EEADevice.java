@@ -27,6 +27,12 @@ package tw.edu.sju.ee.eea.utils.io.tools;
  */
 public interface EEADevice {
 
+    public String getDeviceName();
+
+    public String getDeviceModel();
+
+    public String getSerialNumber();
+
     /**
      * Open this device to connected. If the device is already opened then
      * invoking this method has no effect.
