@@ -17,6 +17,10 @@
  */
 package tw.edu.sju.ee.eea.utils.io.tools;
 
+import java.beans.PropertyChangeListener;
+import java.util.List;
+import org.openide.nodes.Sheet;
+
 /**
  * A {@code IEPEDevice} is a IEPE sensor input device. This is the basic mathod
  * to control device.
@@ -27,11 +31,7 @@ package tw.edu.sju.ee.eea.utils.io.tools;
  */
 public interface EEADevice {
 
-    public String getDeviceName();
-
-    public String getDeviceModel();
-
-    public String getSerialNumber();
+    public List<Sheet.Set> getProperties(PropertyChangeListener listener);
 
     /**
      * Open this device to connected. If the device is already opened then
