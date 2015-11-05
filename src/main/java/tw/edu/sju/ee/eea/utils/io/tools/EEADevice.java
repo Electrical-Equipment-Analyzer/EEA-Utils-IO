@@ -29,10 +29,12 @@ import org.openide.nodes.Sheet;
  * @see IEPEInput
  * @since 1.0
  */
-public interface EEADevice {
+public interface EEADevice extends DeviceInfo {
 
     public List<Sheet.Set> getProperties(PropertyChangeListener listener);
 
+    public int getSamplerate();
+    
     /**
      * Open this device to connected. If the device is already opened then
      * invoking this method has no effect.
