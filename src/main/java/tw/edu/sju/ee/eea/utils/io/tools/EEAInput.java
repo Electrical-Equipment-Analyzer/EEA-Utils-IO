@@ -90,8 +90,6 @@ public class EEAInput implements Runnable {
      */
     @Override
     public void run() {
-        long time = Calendar.getInstance().getTimeInMillis();
-        int count = 0;
         try {
             device.openDevice();
             device.configure();
@@ -100,7 +98,6 @@ public class EEAInput implements Runnable {
                 double[][] read;
                 while (!Thread.interrupted()) {
                     read = device.read(length);
-                    count++;
                     for (int i = 0; i < this.channels.length; i++) {
                         this.channels[i].writeVoltageArray(read[i]);
                     }
@@ -121,8 +118,6 @@ public class EEAInput implements Runnable {
                 Logger.getLogger(EEAInput.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-        Logger.getLogger(EEAInput.class.getName()).log(Level.INFO,
-                "RealSamplerate = " + (count / ((Calendar.getInstance().getTimeInMillis() - time) / (1000.0 * length))));
     }
 
 }
