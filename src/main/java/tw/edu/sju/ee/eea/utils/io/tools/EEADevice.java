@@ -81,7 +81,7 @@ public interface EEADevice extends DeviceInfo {
      * @return Channels data.
      * @throws EEAException if an error occurs
      */
-    public double[][] read(int length) throws EEAException;
+    public double[][] read(int length) throws EEAException, InterruptedException;
 
     /**
      * Start the device to acquire data.

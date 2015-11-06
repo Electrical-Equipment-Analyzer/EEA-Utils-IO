@@ -107,6 +107,7 @@ public class EEAInput implements Runnable {
             } catch (InterruptedIOException ex) {
             } catch (IOException ex) {
                 Logger.getLogger(EEAInput.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (InterruptedException ex) {
             }
         } catch (EEAException ex) {
             Logger.getLogger(EEAInput.class.getName()).log(Level.SEVERE, null, ex);
